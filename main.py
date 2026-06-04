@@ -1,11 +1,26 @@
 import cv2 as cv
 import numpy as np
+# import dlib
 
 camera= cv.VideoCapture(0)
 frame_width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH))
 frame_height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT))
 fps = camera.get(cv.CAP_PROP_FPS) 
 
+
+# def add_lipstick(img, landmarks, color=(255,0,0)):
+#     img = img.copy()
+
+#     lips_outer = np.array([landmarks[i] for i in range(48, 60)], dtype=np.int32)
+#     lips_inner = np.array([landmarks[i] for i in range(60, 68)], dtype=np.int32)
+
+#     mask = np.zeros_like(img)
+#     cv.fillPoly(mask, [lips_outer], color)
+#     cv.fillPoly(mask, [lips_inner], (0, 0, 0))
+
+#     img = cv.GaussianBlur(img, (5, 5), 2)
+#     img = cv.addWeighted(img, 0.9, mask, 0.2, 0)
+#     return img
 while True:
         ret, frame = camera.read() 
 
@@ -31,6 +46,18 @@ while True:
         filmstrip[416:416+ resized_canny.shape[0], 165: 165+resized_canny.shape[1]]= resized_canny
         cv.imshow('og', frame)
         cv.imshow("photobooth", filmstrip)
+        # PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
+        # face_detector = dlib.get_frontal_face_detector()
+        # landmark_detector = dlib.shape_predictor(PREDICTOR_PATH)
+
+        # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        # faces = face_detector(gray)
+
+        # for face in faces:
+        #     landmarks = landmark_detector(gray, face)
+        #     points = [(landmarks.part(i).x, landmarks.part(i).y) for i in range(68)]
+        # lips= add_lipstick(face, landmarks, color=(255, 0, 0))
+        # cv.imshow('lips', lips)
         if cv.waitKey(50) & 0xFF == ord('q'):
             break
 camera.release()
