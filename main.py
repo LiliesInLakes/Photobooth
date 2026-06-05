@@ -40,11 +40,14 @@ while True:
         canny= cv.cvtColor(canny, cv.COLOR_GRAY2BGR)
         resized_mask = cv.resize(Mask, (404, 300))
         resized_canny=cv.resize(canny, (404, 300))
+        resized_norm= cv.resize(frame, (404, 300))
         # resized_mask= cv.copyMakeBorder(resized_mask, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         # resized_canny= cv.copyMakeBorder(resized_canny, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         filmstrip[82:82+ resized_mask.shape[0], 165: 165+resized_mask.shape[1]]= resized_mask
+        filmstrip[754:754+ resized_mask.shape[0], 165: 165+resized_mask.shape[1]]= resized_norm
         filmstrip[416:416+ resized_canny.shape[0], 165: 165+resized_canny.shape[1]]= resized_canny
-        cv.imshow('og', frame)
+        filmstrip[1090:1090+ resized_canny.shape[0], 165: 165+resized_canny.shape[1]]= resized_canny
+        # cv.imshow('og', frame)
         cv.imshow("photobooth", filmstrip)
         # PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
         # face_detector = dlib.get_frontal_face_detector()
