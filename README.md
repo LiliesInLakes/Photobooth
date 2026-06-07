@@ -1,4 +1,4 @@
-#Photobooth
+**Photobooth**
 
 This is an opencv project that puts filters on you
 
