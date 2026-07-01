@@ -3,8 +3,9 @@
 This is an opencv project that puts filters on you
 
 
+https://github.com/user-attachments/assets/4003f26a-a7c5-4657-bd56-bf1dd7575b3f
 
-https://github.com/user-attachments/assets/4d49fac9-c18a-4176-9696-dea4d622f6e3
+
 
 
 It uses Dlib's facial landmarks to identify your features. It puts a green coloured lipstick and turns your eyes yellow. The black and white image is formed using canny edges.
