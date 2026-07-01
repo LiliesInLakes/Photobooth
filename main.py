@@ -73,7 +73,7 @@ while True:
         if len(points) == 68:
         # Generate Lipstick Frame
             lipstick = add_lipstick(frame, points, (0, 255, 0))
-            eye= change_eyecolor(frame, points, (0, 255, 0))
+            eye= change_eyecolor(frame, points, (0, 191, 255))
         else:
         # Fallback if no face is detected so the app doesn't crash
             lipstick = frame.copy()
@@ -99,9 +99,9 @@ while True:
         # resized_mask= cv.copyMakeBorder(resized_mask, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         # resized_canny= cv.copyMakeBorder(resized_canny, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         filmstrip[81:81+ resized_mask.shape[0], 227: 227+resized_mask.shape[1]]= resized_lips
-        filmstrip[755:755+ resized_mask.shape[0], 227: 227+resized_mask.shape[1]]= resized_norm
+        filmstrip[755:755+ resized_mask.shape[0], 227: 227+resized_mask.shape[1]]= resized_eyes
         filmstrip[415:415+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_canny
-        filmstrip[1091:1091+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_eyes
+        filmstrip[1091:1091+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_norm
         # cv.imshow('og', frame)
         cv.imshow("photobooth", filmstrip)
         
