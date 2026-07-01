@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import dlib
-
+import math
 
 
 PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
@@ -17,6 +17,30 @@ frame_width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH))
 frame_height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT))
 fps = camera.get(cv.CAP_PROP_FPS) 
 
+
+def midpoint(p1 ,p2):
+    return int((p1.x + p2.x)/2), int((p1.y + p2.y)/2)
+
+
+def change_eyecolor(img, landmarks, color):
+    img= img.copy()
+    # print(f"landmarks is {landmarks[37]}")
+    eyeXL= (int((landmarks[37][0]+landmarks[40][0])/2), int((landmarks[37][1]+landmarks[40][1])/2))
+    Lradius= math.sqrt((landmarks[40][0]- landmarks[37][0])**2+ (landmarks[40][1]- landmarks[37][1])**2)/2
+    lrad= int(Lradius-1)
+    eyeXR= (int((landmarks[47][0]+landmarks[44][0])/2), int((landmarks[47][1]+landmarks[44][1])/2))
+    Rradius= math.sqrt((landmarks[44][0]- landmarks[47][0])**2+ (landmarks[44][1]- landmarks[47][1])**2)/2
+    Rrad= int(Rradius-1)
+    # print(f"center is {eyeXL}")
+    mask = np.zeros_like(img)
+    cv.circle(mask, eyeXL, lrad, color, thickness=-1)
+    cv.circle(mask, eyeXR, Rrad, color, thickness=-1)
+
+    # cv.fillPoly(mask, [eyeXR], (0, 0, 0))
+
+    img = cv.GaussianBlur(img, (5, 5), 2)
+    img = cv.addWeighted(img, 0.9, mask, 0.2, 0)
+    return img
 
 def add_lipstick(img, landmarks, color):
     img = img.copy()
@@ -49,10 +73,13 @@ while True:
         if len(points) == 68:
         # Generate Lipstick Frame
             lipstick = add_lipstick(frame, points, (0, 255, 0))
+            eye= change_eyecolor(frame, points, (0, 255, 0))
         else:
         # Fallback if no face is detected so the app doesn't crash
             lipstick = frame.copy()
+            eye= frame.copy()
             cv.putText(lipstick, "No Face Detected", (30, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) 
+        cv.imshow("EYES", eye)
         img= cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         img= cv.createCLAHE(clipLimit=2.0, tileGridSize=(8,8)).apply(img)
         gaus= cv.GaussianBlur(img, (15, 15), 0)
@@ -68,12 +95,13 @@ while True:
         resized_canny=cv.resize(canny, (542, 300))
         resized_norm= cv.resize(frame, (542, 300))
         resized_lips= cv.resize(lipstick, (542, 300))
+        resized_eyes= cv.resize(eye, (542, 300))
         # resized_mask= cv.copyMakeBorder(resized_mask, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         # resized_canny= cv.copyMakeBorder(resized_canny, 5, 5, 5, 5, cv.BORDER_CONSTANT, value=[40, 30, 29])
         filmstrip[81:81+ resized_mask.shape[0], 227: 227+resized_mask.shape[1]]= resized_lips
         filmstrip[755:755+ resized_mask.shape[0], 227: 227+resized_mask.shape[1]]= resized_norm
         filmstrip[415:415+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_canny
-        filmstrip[1091:1091+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_mask
+        filmstrip[1091:1091+ resized_canny.shape[0], 227: 227+resized_canny.shape[1]]= resized_eyes
         # cv.imshow('og', frame)
         cv.imshow("photobooth", filmstrip)
         
